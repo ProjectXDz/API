@@ -18,7 +18,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
