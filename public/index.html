@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashLang – Korean Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --card: #16161a;
+    --border: #2a2a35;
+    --accent: #c084fc;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --body-grad-1: #1a0a2e;
+    --body-grad-2: #0a1a1a;
+  }
+
+[data-theme=“light”] {
+–bg: #f5f1eb; –card: #fffdf8; –border: #d8cfc0; –accent: #7c3aed;
+–green: #16a34a; –red: #dc2626; –yellow: #d97706; –text: #1a1612;
+–muted: #8a7d6a; –body-grad-1: #ede8ff; –body-grad-2: #e8f5e9;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg); color: var(–text);
+font-family: ‘Space Mono’, monospace; min-height: 100vh;
+display: flex; flex-direction: column; align-items: center; padding: 20px;
+background-image: radial-gradient(ellipse at 20% 20%, var(–body-grad-1) 0%, transparent 50%),
+radial-gradient(ellipse at 80% 80%, var(–body-grad-2) 0%, transparent 50%);
+transition: background 0.3s, color 0.3s;
+}
+
+header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.logo { font-size: 18px; font-weight: 700; color: var(–accent); letter-spacing: 2px; }
+.lang-selector { display: flex; gap: 8px; }
+.lang-btn { background: var(–card); border: 1px solid var(–border); color: var(–muted); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-family: ‘Space Mono’, monospace; transition: all 0.2s; }
+.lang-btn.active { border-color: var(–accent); color: var(–accent); background: rgba(192,132,252,0.1); }
+.lang-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.theme-btn { background: var(–card); border: 1px solid var(–border); color: var(–muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.theme-btn:hover { border-color: var(–accent); color: var(–accent); }
+.seen-badge { position: absolute; top: 14px; right: 16px; font-size: 10px; color: var(–muted); letter-spacing: 1px; }
+.reset-btn { background: transparent; border: 1px solid var(–border); color: var(–muted); padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-family: ‘Space Mono’, monospace; transition: all 0.2s; white-space: nowrap; }
+.reset-btn:hover { border-color: var(–red); color: var(–red); }
+
+.progress-bar { width: 100%; max-width: 500px; height: 3px; background: var(–border); border-radius: 3px; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(–accent), #818cf8); border-radius: 3px; transition: width 0.4s ease; }
+.progress-text { font-size: 11px; color: var(–muted); text-align: right; width: 100%; max-width: 500px; margin-bottom: 20px; }
+
+.card-wrapper { perspective: 1000px; width: 100%; max-width: 500px; height: 280px; margin-bottom: 24px; cursor: pointer; }
+.card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; inset: 0; background: var(–card); border: 1px solid var(–border); border-radius: 20px; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; overflow: hidden; }
+.card-face::before { content: ‘’; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(192,132,252,0.05) 0%, transparent 60%); pointer-events: none; }
+.card-back { transform: rotateY(180deg); background: linear-gradient(135deg, #16161a, #1a1025); }
+.card-tag { position: absolute; top: 16px; left: 20px; font-size: 10px; color: var(–muted); letter-spacing: 2px; text-transform: uppercase; }
+.card-hint { position: absolute; bottom: 16px; font-size: 11px; color: var(–muted); }
+.main-text { font-family: ‘Noto Sans KR’, sans-serif; font-size: 52px; font-weight: 700; color: var(–text); text-align: center; line-height: 1.2; }
+.main-text.small { font-size: 32px; }
+.romanize { font-size: 16px; color: var(–accent); margin-top: 8px; letter-spacing: 1px; }
+.meaning { font-family: ‘Noto Sans Thai’, sans-serif; font-size: 22px; font-weight: 500; color: var(–text); text-align: center; margin-bottom: 4px; }
+.example { font-family: ‘Noto Sans KR’, sans-serif; font-size: 13px; color: var(–muted); text-align: center; margin-top: 12px; line-height: 1.6; }
+.front-example { font-family: ‘Noto Sans KR’, sans-serif; font-size: 12px; color: var(–muted); text-align: center; margin-top: 10px; line-height: 1.6; white-space: pre-line; max-width: 90%; opacity: 0.85; }
+
+.voice-section { width: 100%; max-width: 500px; background: var(–card); border: 1px solid var(–border); border-radius: 16px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+.voice-label { font-size: 11px; color: var(–muted); letter-spacing: 2px; margin-bottom: 14px; text-transform: uppercase; }
+.mic-row { display: flex; align-items: center; gap: 14px; }
+.mic-btn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(–accent); background: rgba(192,132,252,0.1); color: var(–accent); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.mic-btn:hover { background: rgba(192,132,252,0.2); }
+.mic-btn.recording { background: rgba(248,113,113,0.15); border-color: var(–red); color: var(–red); animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.4); } 50% { box-shadow: 0 0 0 10px rgba(248,113,113,0); } }
+.voice-result { flex: 1; }
+.voice-heard { font-size: 13px; color: var(–muted); margin-bottom: 4px; }
+.voice-text { font-family: ‘Noto Sans KR’, sans-serif; font-size: 20px; color: var(–text); min-height: 28px; }
+.score-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+.score-correct { background: rgba(74,222,128,0.15); color: var(–green); border: 1px solid var(–green); }
+.score-close   { background: rgba(251,191,36,0.15);  color: var(–yellow); border: 1px solid var(–yellow); }
+.score-wrong   { background: rgba(248,113,113,0.15); color: var(–red);    border: 1px solid var(–red); }
+
+.btn-row { display: flex; gap: 10px; width: 100%; max-width: 500px; margin-bottom: 20px; }
+.btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(–border); background: var(–card); color: var(–text); font-family: ‘Space Mono’, monospace; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.btn:hover { border-color: var(–accent); color: var(–accent); }
+.btn-next { background: var(–accent); border-color: var(–accent); color: #0d0d0f; font-weight: 700; }
+.btn-next:hover { background: #a855f7; border-color: #a855f7; color: #0d0d0f; }
+
+.stats-row { display: flex; gap: 12px; width: 100%; max-width: 500px; }
+.stat-box { flex: 1; background: var(–card); border: 1px solid var(–border); border-radius: 12px; padding: 12px; text-align: center; }
+.stat-num { font-size: 22px; font-weight: 700; }
+.stat-label { font-size: 10px; color: var(–muted); letter-spacing: 1px; margin-top: 2px; }
+
+.no-support { background: rgba(248,113,113,0.1); border: 1px solid var(–red); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(–red); width: 100%; max-width: 500px; margin-bottom: 16px; display: none; }
+
+.done-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,15,0.92); backdrop-filter: blur(8px); z-index: 100; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.done-overlay.show { display: flex; }
+.done-box { background: var(–card); border: 1px solid var(–accent); border-radius: 24px; padding: 40px 36px; text-align: center; max-width: 340px; width: 90%; }
+.done-emoji { font-size: 56px; margin-bottom: 12px; }
+.done-title { font-size: 20px; font-weight: 700; color: var(–accent); margin-bottom: 8px; }
+.done-score { font-size: 14px; color: var(–muted); margin-bottom: 24px; line-height: 1.8; }
+.done-score span { color: var(–text); font-weight: 700; }
+.btn-restart { background: var(–accent); border: none; color: #0d0d0f; font-family: ‘Space Mono’, monospace; font-size: 13px; font-weight: 700; padding: 14px 32px; border-radius: 12px; cursor: pointer; width: 100%; transition: background 0.2s; }
+.btn-restart:hover { background: #a855f7; }
+
+.timer-section { width: 100%; max-width: 500px; background: var(–card); border: 1px solid var(–border); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; }
+.timer-header { display: flex; align-items: center; justify-content: space-between; }
+.timer-label { font-size: 11px; color: var(–muted); letter-spacing: 2px; text-transform: uppercase; }
+.toggle-switch { position: relative; width: 40px; height: 22px; cursor: pointer; }
+.toggle-switch input { display: none; }
+.toggle-track { position: absolute; inset: 0; background: var(–border); border-radius: 22px; transition: background 0.2s; }
+.toggle-switch input:checked + .toggle-track { background: var(–accent); }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(18px); }
+.timer-controls { margin-top: 14px; display: none; }
+.timer-controls.visible { display: block; }
+.timer-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.timer-row label { font-size: 12px; color: var(–muted); flex-shrink: 0; }
+.sec-input { background: var(–bg); border: 1px solid var(–border); color: var(–text); font-family: ‘Space Mono’, monospace; font-size: 14px; padding: 6px 10px; border-radius: 8px; width: 70px; text-align: center; }
+.sec-input:focus { outline: none; border-color: var(–accent); }
+.timer-mode-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.mode-btn { flex: 1; padding: 7px 4px; border-radius: 8px; border: 1px solid var(–border); background: transparent; color: var(–muted); font-family: ‘Space Mono’, monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+.mode-btn.active { border-color: var(–accent); color: var(–accent); background: rgba(192,132,252,0.1); }
+.timer-bar-wrap { height: 4px; background: var(–border); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.timer-bar-fill { height: 100%; background: linear-gradient(90deg, var(–green), var(–accent)); border-radius: 4px; transition: width 1s linear, background 0.3s; width: 100%; }
+.timer-bar-fill.warn { background: linear-gradient(90deg, var(–red), var(–yellow)); }
+.timer-countdown { font-size: 11px; color: var(–muted); text-align: right; margin-top: 4px; }
+
+.speak-btn { position: absolute; bottom: 16px; right: 20px; background: rgba(192,132,252,0.12); border: 1px solid rgba(192,132,252,0.3); color: var(–accent); border-radius: 50%; width: 36px; height: 36px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; }
+.speak-btn:hover { background: rgba(192,132,252,0.25); transform: scale(1.1); }
+.speak-btn.speaking { background: rgba(192,132,252,0.3); animation: pulse 0.8s infinite; }
+
+.topic-bar { width: 100%; max-width: 500px; background: var(–card); border: 1px solid var(–border); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.level-select { flex: 1; min-width: 110px; background: var(–bg); border: 1px solid var(–border); color: var(–text); font-family: ‘Space Mono’, monospace; font-size: 12px; padding: 7px 10px; border-radius: 8px; cursor: pointer; appearance: none; }
+.level-select:focus { outline: none; border-color: var(–accent); }
+.gen-btn { background: var(–accent); border: none; color: #0d0d0f; font-family: ‘Space Mono’, monospace; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+.gen-btn:hover { background: #a855f7; }
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.loading-bar { width: 100%; max-width: 500px; display: none; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 12px; color: var(–muted); }
+.loading-bar.show { display: flex; }
+.loading-spin { width: 16px; height: 16px; border: 2px solid var(–border); border-top-color: var(–accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="logo">⚡ FLASHLANG</div>
+  <div class="header-right">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="เปลี่ยน theme">🌙</button>
+    <div class="lang-selector">
+      <button class="lang-btn active" onclick="setLang('ko')">🇰🇷 KO</button>
+      <button class="lang-btn" onclick="setLang('jp')">🇯🇵 JA</button>
+      <button class="lang-btn" onclick="setLang('cn')">🇨🇳 ZH</button>
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressText">0 / 0</div>
+
+<div class="topic-bar">
+  <select class="level-select" id="levelSelect">
+    <option value="1">🟢 Level 1</option>
+    <option value="2">🟡 Level 2</option>
+    <option value="3">🟠 Level 3</option>
+    <option value="4">🔴 Level 4</option>
+    <option value="5">⚫ Level 5</option>
+    <option value="6">💀 Level 6</option>
+  </select>
+  <button class="gen-btn" id="genBtn" onclick="generateDeck()">✦ โหลดคำใหม่</button>
+  <button class="reset-btn" onclick="resetSeen()">↺ reset</button>
+</div>
+
+<div class="loading-bar" id="loadingBar">
+  <div class="loading-spin"></div>
+  <span id="loadingText">กำลังโหลดคำศัพท์จาก API…</span>
+</div>
+
+<div class="no-support" id="noSupport">⚠️ เบราว์เซอร์นี้ไม่รองรับ Voice Recognition</div>
+
+<div class="done-overlay" id="doneOverlay">
+  <div class="done-box">
+    <div class="done-emoji">🎉</div>
+    <div class="done-title">จบแล้ว!</div>
+    <div class="done-score" id="doneScore"></div>
+    <button class="btn-restart" onclick="restartDeck()">✦ โหลดคำใหม่</button>
+    <button class="btn-restart" style="margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted)" onclick="resetSeen()">↺ reset คำที่เล่นไป</button>
+  </div>
+</div>
+
+<div class="card-wrapper" onclick="flipCard()">
+  <div class="card-inner" id="cardInner">
+    <div class="card-face card-front">
+      <div class="card-tag">แตะเพื่อพลิก</div>
+      <div class="seen-badge" id="seenBadge"></div>
+      <div class="main-text" id="frontText">…</div>
+      <div class="romanize" id="frontRoman"></div>
+      <div class="front-example" id="frontExample"></div>
+      <button class="speak-btn" id="speakBtn" onclick="event.stopPropagation(); speakWord()" title="ฟังเสียง">🔊</button>
+      <div class="card-hint">👆 tap to reveal</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-tag">ความหมาย</div>
+      <div class="meaning" id="backMeaning"></div>
+      <div class="example" id="backExample"></div>
+      <div class="card-hint">👆 tap to flip back</div>
+    </div>
+  </div>
+</div>
+
+<div class="timer-section">
+  <div class="timer-header">
+    <div class="timer-label">⏱ Auto Timer</div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="timerToggle" onchange="onTimerToggle()">
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+  </div>
+  <div class="timer-controls" id="timerControls">
+    <div class="timer-mode-row" style="margin-top:12px">
+      <button class="mode-btn active" id="modeFlip" onclick="setTimerMode('flip')">พลิกอัตโนมัติ</button>
+      <button class="mode-btn" id="modeNext" onclick="setTimerMode('next')">เลื่อนถัดไปเลย</button>
+    </div>
+    <div class="timer-row">
+      <label>วินาที:</label>
+      <input class="sec-input" type="number" id="secInput" value="5" min="1" max="99" onchange="onSecChange()">
+      <div style="font-size:11px;color:var(--muted)">วิ / การ์ด</div>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar-fill" id="timerBarFill"></div></div>
+    <div class="timer-countdown" id="timerCountdown">–</div>
+  </div>
+</div>
+
+<div class="voice-section">
+  <div class="voice-label">🎤 ลองพูดดูสิ</div>
+  <div class="mic-row">
+    <button class="mic-btn" id="micBtn" onclick="toggleRecording()">🎙️</button>
+    <div class="voice-result">
+      <div class="voice-heard">ได้ยินว่า:</div>
+      <div class="voice-text" id="voiceText">–</div>
+      <div id="scoreBadge"></div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn" onclick="markResult('wrong')">✗ ยังไม่รู้</button>
+  <button class="btn" onclick="markResult('correct')">✓ รู้แล้ว</button>
+  <button class="btn btn-next" onclick="nextCard()">ใบถัดไป →</button>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box"><div class="stat-num" id="statCorrect" style="color:var(--green)">0</div><div class="stat-label">รู้แล้ว</div></div>
+  <div class="stat-box"><div class="stat-num" id="statWrong" style="color:var(--red)">0</div><div class="stat-label">ยังไม่รู้</div></div>
+  <div class="stat-box"><div class="stat-num" id="statStreak" style="color:var(--yellow)">0</div><div class="stat-label">streak 🔥</div></div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const API_BASE = 'https://project-ebqun.vercel.app';
+const langCodes = { ko:'ko-KR', jp:'ja-JP', cn:'zh-CN' };
+const ttsLang   = { ko:'ko-KR', jp:'ja-JP', cn:'zh-TW' };
+
+let currentLang = 'ko';
+let deck = [];
+let idx = 0, correct = 0, wrong = 0, streak = 0;
+let isFlipped = false, isDone = false;
+let recognition = null, isRecording = false;
+let timerEnabled = false, timerMode = 'flip', timerSec = 5;
+let timerInterval = null, timerRemaining = 0, timerPhase = 'front';
+let _deckToken = 0;
+const seenKeys = { ko: new Set(), jp: new Set(), cn: new Set() };
+
+// ===== THEME =====
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+}
+
+// ===== API FETCH =====
+// Map lang+level → multiple pages for variety, cache results
+const _cache = {};
+
+async function fetchWords(lang, level, limit = 20) {
+  const key = `${lang}:${level}`;
+  if (_cache[key] && _cache[key].length >= limit) {
+    return shuffle([..._cache[key]]).slice(0, limit);
+  }
+
+  // Fetch 2 pages and combine for more variety
+  const [r1, r2] = await Promise.all([
+    fetch(`${API_BASE}/api/words?lang=${lang}&level=${level}&limit=${limit}&page=1`),
+    fetch(`${API_BASE}/api/words?lang=${lang}&level=${level}&limit=${limit}&page=2`)
+  ]);
+
+  if (!r1.ok) throw new Error(`API error ${r1.status}`);
+  const d1 = await r1.json();
+  const d2 = r2.ok ? await r2.json() : { words: [] };
+
+  // API returns { word, meaning, example } — map to our card shape
+  const toCard = w => ({
+    front:   w.word,
+    roman:   '',           // API doesn't return romanization
+    meaning: w.meaning,
+    example: w.example || ''
+  });
+
+  const combined = [
+    ...(d1.words || []).map(toCard),
+    ...(d2.words || []).map(toCard)
+  ];
+
+  // Deduplicate
+  const seen = new Set();
+  const unique = combined.filter(c => {
+    if (seen.has(c.front)) return false;
+    seen.add(c.front); return true;
+  });
+
+  _cache[key] = unique;
+  return shuffle([...unique]).slice(0, limit);
+}
+
+// ===== GENERATE DECK =====
+async function generateDeck() {
+  const myToken = ++_deckToken;
+  const myLang  = currentLang;
+  const level   = parseInt(document.getElementById('levelSelect').value);
+  const btn     = document.getElementById('genBtn');
+  const bar     = document.getElementById('loadingBar');
+
+  btn.disabled = true;
+  bar.classList.add('show');
+  document.getElementById('loadingText').textContent = 'กำลังโหลดจาก API…';
+
+  try {
+    const cards = await fetchWords(myLang, level, 20);
+    if (myToken !== _deckToken) return;
+    if (!cards.length) throw new Error('ไม่พบคำศัพท์ในระดับนี้');
+    applyDeck(cards, myLang);
+  } catch(e) {
+    if (myToken !== _deckToken) return;
+    document.getElementById('loadingText').textContent = `❌ ${e.message || 'โหลดไม่ได้'}`;
+    setTimeout(() => bar.classList.remove('show'), 3000);
+  } finally {
+    btn.disabled = false;
+    bar.classList.remove('show');
+  }
+}
+
+function applyDeck(cards, lang) {
+  if (lang !== currentLang) return;
+  const unseen = cards.filter(c => !seenKeys[lang].has(c.front));
+  deck = shuffle(unseen.length ? unseen : cards);
+  idx = 0; correct = 0; wrong = 0; streak = 0; isDone = false;
+  updateStats();
+  document.getElementById('doneOverlay').classList.remove('show');
+  loadCard();
+}
+
+function resetSeen() {
+  seenKeys[currentLang].clear();
+  delete _cache[`${currentLang}:${document.getElementById('levelSelect').value}`];
+  document.getElementById('doneOverlay').classList.remove('show');
+  generateDeck();
+}
+
+// ===== LANG SWITCH =====
+function setLang(lang) {
+  _deckToken++;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['ko','jp','cn'][i] === lang);
+  });
+  stopRecording();
+  restartTimer();
+  generateDeck();
+}
+
+// ===== CARD =====
+function loadCard() {
+  if (idx >= deck.length) { isDone = true; stopTimer(); showDoneScreen(); return; }
+  isDone = false;
+  const card = deck[idx];
+  const el = document.getElementById('cardInner');
+  el.style.transition = 'none';
+  el.classList.remove('flipped');
+  isFlipped = false;
+  void el.offsetWidth;
+  el.style.transition = '';
+
+  document.getElementById('frontText').textContent = card.front;
+  document.getElementById('frontText').className = 'main-text' + (card.front.length > 5 ? ' small' : '');
+  document.getElementById('frontRoman').textContent = card.roman || '';
+  document.getElementById('frontExample').textContent = (card.example || '').split('\n')[0];
+  document.getElementById('backMeaning').textContent = card.meaning;
+  document.getElementById('backExample').textContent = card.example || '';
+  document.getElementById('voiceText').textContent = '–';
+  document.getElementById('scoreBadge').innerHTML = '';
+
+  const alreadySeen = seenKeys[currentLang].has(card.front);
+  document.getElementById('seenBadge').textContent = alreadySeen ? '👁 เคยเล่นแล้ว' : '';
+  seenKeys[currentLang].add(card.front);
+
+  updateProgress();
+  if (timerEnabled) startTimerCycle();
+}
+
+function showDoneScreen() {
+  document.getElementById('doneScore').innerHTML =
+    `ถูก <span>${correct}</span> / ผิด <span style="color:var(--red)">${wrong}</span> / ทั้งหมด <span>${deck.length}</span> ใบ`;
+  document.getElementById('doneOverlay').classList.add('show');
+}
+
+function restartDeck() {
+  document.getElementById('doneOverlay').classList.remove('show');
+  generateDeck();
+}
+
+function updateProgress() {
+  const pct = deck.length ? (idx / deck.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${idx} / ${deck.length}`;
+}
+
+function updateStats() {
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statStreak').textContent = streak;
+}
+
+function flipCard() { if(isDone) return; isFlipped = !isFlipped; document.getElementById('cardInner').classList.toggle('flipped', isFlipped); }
+function nextCard() { if(isDone) return; stopTimer(); idx++; loadCard(); stopRecording(); }
+function markResult(type) { if(isDone) return; if(type==='correct'){correct++;streak++;}else{wrong++;streak=0;} updateStats(); nextCard(); }
+function shuffle(arr) { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+// ===== TTS =====
+function speakWord() {
+  if(isDone || idx >= deck.length) return;
+  const text = deck[idx].front;
+  const lang = ttsLang[currentLang];
+  const btn = document.getElementById('speakBtn');
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = lang; utt.rate = currentLang === 'ko' ? 0.76 : 0.85;
+  utt.onstart = () => { btn.classList.add('speaking'); btn.textContent = '🔉'; };
+  utt.onend = utt.onerror = () => { btn.classList.remove('speaking'); btn.textContent = '🔊'; };
+  speechSynthesis.speak(utt);
+}
+
+// ===== TIMER =====
+function onTimerToggle() {
+  timerEnabled = document.getElementById('timerToggle').checked;
+  document.getElementById('timerControls').classList.toggle('visible', timerEnabled);
+  if(timerEnabled) startTimerCycle(); else { stopTimer(); document.getElementById('timerCountdown').textContent='–'; document.getElementById('timerBarFill').style.width='100%'; }
+}
+function setTimerMode(mode) { timerMode=mode; document.getElementById('modeFlip').classList.toggle('active',mode==='flip'); document.getElementById('modeNext').classList.toggle('active',mode==='next'); if(timerEnabled) startTimerCycle(); }
+function onSecChange() { const v=parseInt(document.getElementById('secInput').value); timerSec=isNaN(v)||v<1?1:v>99?99:v; document.getElementById('secInput').value=timerSec; if(timerEnabled) startTimerCycle(); }
+function startTimerCycle() { stopTimer(); if(isDone||!timerEnabled) return; timerPhase='front'; timerRemaining=timerSec; runTick(); timerInterval=setInterval(runTick,1000); }
+function runTick() {
+  if(isDone){stopTimer();return;}
+  const fill=document.getElementById('timerBarFill');
+  fill.style.width=(timerRemaining/timerSec*100)+'%';
+  fill.classList.toggle('warn',timerRemaining<=Math.ceil(timerSec*0.3));
+  document.getElementById('timerCountdown').textContent=timerRemaining+'วิ';
+  if(timerRemaining<=0){
+    if(timerMode==='flip'){
+      if(timerPhase==='front'){isFlipped=true;document.getElementById('cardInner').classList.add('flipped');timerPhase='back';timerRemaining=timerSec;}
+      else{stopTimer();idx++;loadCard();}
+    } else {stopTimer();idx++;loadCard();}
+    return;
+  }
+  timerRemaining--;
+}
+function stopTimer() { if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+function restartTimer() { if(timerEnabled) startTimerCycle(); }
+
+// ===== VOICE =====
+function setupRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ document.getElementById('noSupport').style.display='block'; document.getElementById('micBtn').disabled=true; return null; }
+  const rec = new SR();
+  rec.continuous=false; rec.interimResults=true; rec.maxAlternatives=5;
+  rec.onresult = e => {
+    const r=e.results[e.resultIndex]; if(!r) return;
+    let best=r[0]; for(let i=1;i<r.length;i++) if((r[i].confidence||0)>(best.confidence||0)) best=r[i];
+    const heard=(best.transcript||'').trim();
+    document.getElementById('voiceText').textContent=heard||'–';
+    if(r.isFinal&&heard) checkPronunciation(heard,best.confidence);
+  };
+  rec.onerror = e => { document.getElementById('voiceText').textContent='เกิดข้อผิดพลาด: '+(e.error||'unknown'); isRecording=false; document.getElementById('micBtn').classList.remove('recording'); document.getElementById('micBtn').textContent='🎙️'; };
+  rec.onend = () => { isRecording=false; document.getElementById('micBtn').classList.remove('recording'); document.getElementById('micBtn').textContent='🎙️'; };
+  return rec;
+}
+function toggleRecording() {
+  if(!recognition) recognition=setupRecognition();
+  if(!recognition) return;
+  if(isRecording){ stopRecording(); return; }
+  recognition.lang=langCodes[currentLang];
+  try{recognition.start();}catch(e){document.getElementById('voiceText').textContent='เริ่มฟังไม่สำเร็จ';return;}
+  isRecording=true; document.getElementById('micBtn').classList.add('recording'); document.getElementById('micBtn').textContent='⏹';
+  document.getElementById('voiceText').textContent='…กำลังฟัง'; document.getElementById('scoreBadge').innerHTML='';
+}
+function stopRecording() { if(recognition&&isRecording){try{recognition.stop();}catch(e){}} isRecording=false; document.getElementById('micBtn').classList.remove('recording'); document.getElementById('micBtn').textContent='🎙️'; }
+function normalizeText(t) { if(!t)return''; return t.normalize('NFKC').toLowerCase().replace(/[ー〜～\-\s。、，,.!?！？・"'`（）()\[\]「」『』]/g,'').replace(/[\u30a1-\u30f6]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); }
+function checkPronunciation(heard,confidence=null) {
+  if(isDone||idx>=deck.length)return;
+  const target=normalizeText(deck[idx].front), heardClean=normalizeText(heard);
+  const badge=document.getElementById('scoreBadge');
+  if(!heardClean){badge.innerHTML='<span class="score-badge score-wrong">✗ ไม่ได้ยินชัด</span>';return;}
+  if(heardClean===target){badge.innerHTML='<span class="score-badge score-correct">✓ ถูกต้อง!</span>';}
+  else{const sim=similarity(heardClean,target);const adj=Math.max(0,sim-((confidence!==null&&confidence<0.45)?0.07:0));if(adj>=0.7)badge.innerHTML=`<span class="score-badge score-close">~ เกือบถูก (${Math.round(adj*100)}%)</span>`;else badge.innerHTML=`<span class="score-badge score-wrong">✗ ลองใหม่ (${Math.round(adj*100)}%)</span>`;}
+}
+function similarity(a,b){if(!a||!b)return 0;const l=a.length>b.length?a:b,s=a.length>b.length?b:a;if(!l.length)return 1;return(l.length-editDistance(l,s))/l.length;}
+function editDistance(a,b){const dp=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let p=i;for(let j=1;j<=b.length;j++){const v=a[i-1]===b[j-1]?dp[j-1]:Math.min(dp[j-1],dp[j],p)+1;dp[j-1]=p;p=v;}dp[b.length]=p;}return dp[b.length];}
+
+// ===== INIT =====
+document.documentElement.setAttribute('data-theme','dark');
+setLang('ko');
+</script>
+
+</body>
+</html>
